@@ -19,7 +19,7 @@ public:
   // @preturn CC返回的内存块首地址
   //
   void *fetch_mem_from_cc(std::size_t hash_index, std::size_t aligned_size);
-  void return_mem_to_cc(std::size_t hash_index, std::size_t aligned_size);
+  void return_mem_to_cc(FreeList& free_list, std::size_t aligned_size);
   void expand_fetch_nums(std::size_t index);
 
 private:

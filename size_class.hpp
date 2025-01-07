@@ -31,6 +31,8 @@ public:
   //
   static std::size_t cacl_apply_mem_nums(std::size_t size, std::size_t max_num);
 
+  static std::size_t cacl_apply_page_nums(std::size_t size);
+
 private:
   //
   // @brief 实际执行内存对齐的函数

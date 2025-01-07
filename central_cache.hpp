@@ -21,14 +21,20 @@ public:
   std::size_t fetch_batch_mems(void *&start, void *&end, std::size_t apply_num,
                                std::size_t size);
 
+  void release_list_to_spans(void* start, std::size_t size);
+
+  Span *get_one_span(SpanList &span_list, std::size_t size);
+
+
+
 private:
   CentralCache() = default;
   CentralCache(CentralCache const &) = delete;
   CentralCache &operator=(CentralCache const &) = delete;
 
 private:
-  SpanList span_list_[FREE_LIST_NUM]; // CC中的哈希结构，每个桶是一个SpanList，
-                                      // 管理一个个Span
+  SpanList span_lists_[FREE_LIST_NUM]; // CC中的哈希结构，每个桶是一个SpanList，
+                                       // 管理一个个Span
   static CentralCache *instance_;
 };
 

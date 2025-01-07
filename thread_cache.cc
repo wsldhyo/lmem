@@ -3,6 +3,7 @@
 #include "global_var.hpp"
 #include "size_class.hpp"
 #include <cassert>
+#include <cstddef>
 
 namespace lmem {
 
@@ -25,7 +26,11 @@ void ThreadCache::deallocate(void *obj, std::size_t aligned_size) {
   }
   assert(aligned_size <= MAX_TC_BLOCK_SIZE);
   auto hash_index = SizeClass::get_hash_index(aligned_size);
-  free_lists_[hash_index].push(obj);
+  auto& free_list = free_lists_[hash_index];
+  free_list.push(obj);
+  if (free_list.size() >= fetch_mem_nums_[hash_index]) {
+    return_mem_to_cc(free_list, aligned_size);
+  }
 }
 
 void *ThreadCache::fetch_mem_from_cc(std::size_t hash_index,
@@ -49,11 +54,19 @@ void *ThreadCache::fetch_mem_from_cc(std::size_t hash_index,
   if (actual_num == 1) {
     assert(start == end);
   } else {
-    free_lists_[hash_index].push(start, end, actual_num);
+    free_lists_[hash_index].push(start, end, actual_num - 1);
   }
   return start;
 }
 
+  void ThreadCache::return_mem_to_cc(FreeList& free_list, std::size_t aligned_size){
+    void* start = nullptr;
+    void* end = nullptr;
+    free_list.pop(start, end, aligned_size);
+    CentralCache* CC = CentralCache::get_instance();
+    CC->release_list_to_spans(start, aligned_size);
+
+  }
 void ThreadCache::expand_fetch_nums(std::size_t index) {
   assert(index <= FREE_LIST_NUM);
   if (fetch_mem_nums_[index] < 2) {

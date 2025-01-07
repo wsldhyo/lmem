@@ -2,6 +2,40 @@
 #include <cassert>
 
 namespace lmem {
+  Span*& SpanList::iterator::operator++()
+  {
+    span_ = span_->next;
+    return span_;
+  }
+  Span* SpanList::iterator::operator++(int)
+  {
+    auto res = span_;
+    span_ = span_->next;
+    return res;
+  }
+  Span*& SpanList::iterator::operator--()
+  {
+    span_ = span_->prev;
+    return span_;
+  }
+  Span* SpanList::iterator::operator--(int)
+  {
+    auto res = span_;
+    span_ = span_->prev;
+    return res;
+  }
+  Span*& SpanList::iterator::operator*(){
+    return span_;
+  }
+  Span* SpanList::iterator::operator->(){
+    return span_;
+  }
+  bool SpanList::iterator::operator!=(iterator const& other)const{
+    return span_ != other.span_;
+  }
+  bool SpanList::iterator::operator==(iterator const& other)const{
+    return span_ == other.span_;
+  }
 SpanList::SpanList() {
   head_ = new Span();
   head_->next = head_;
@@ -24,6 +58,16 @@ void SpanList::insert_(Span *new_data, Span *prev, Span *next) {
   next->prev = new_data;
 }
 
+  void SpanList::push_front(Span* span){
+    insert(*begin(), span);
+  }
+
+
+  Span* SpanList::pop_front(){
+    auto res = head_->next;
+    erase(res);
+    return res;
+  }
 void SpanList::erase_(Span *prev, Span *next) {
   prev->next = next;
   next->prev = prev;
@@ -36,4 +80,17 @@ void SpanList::erase(Span *where) {
   }
   erase_(where->prev, where->next);
 }
+
+  void SpanList::lock() const
+  {
+    mutex_.lock();
+  }
+
+  void SpanList::unlock() const
+  {
+    mutex_.unlock();
+  }
+  bool SpanList::empty()const {
+    return head_ == head_->next;
+  }
 } // namespace lmem

@@ -1,0 +1,3 @@
+/home/crain/C++/mempool/build/CMakeFiles/rebuild_cache.dir
+/home/crain/C++/mempool/build/CMakeFiles/edit_cache.dir
+/home/crain/C++/mempool/build/CMakeFiles/main.dir

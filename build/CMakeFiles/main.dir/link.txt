@@ -1,0 +1,1 @@
+/usr/local/bin/c++ CMakeFiles/main.dir/main.cc.o CMakeFiles/main.dir/free_list.cc.o CMakeFiles/main.dir/size_class.cc.o CMakeFiles/main.dir/thread_cache.cc.o CMakeFiles/main.dir/span_list.cc.o CMakeFiles/main.dir/central_cache.cc.o CMakeFiles/main.dir/page_cache.cc.o CMakeFiles/main.dir/sys_alloc.cc.o CMakeFiles/main.dir/concurrent_allocate.cc.o -o main  -pthread 

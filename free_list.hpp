@@ -36,12 +36,17 @@ public:
   // @param void
   // @return 分配的空闲内存块的指针
   //
-  void *pop();
+  void* pop();
+
+  void pop(void*&start, void*end, std::size_t num);
+
+  std::size_t size()const;
 
   bool empty() const;
 
 private:
   void *list_head_ = nullptr; // 自由链表头指针
+  std::size_t size_ = 0;
 };
 
 } // namespace lmem
