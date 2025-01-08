@@ -87,10 +87,11 @@ Span *CentralCache::get_one_span(SpanList &span_list, std::size_t size) {
   span_list.unlock();
   std::size_t k = SizeClass::cacl_apply_page_nums(size);
   PageCache *page_cache = PageCache::get_instance();
+  
   page_cache->lock();
   Span *new_span = page_cache->new_raw_span(k);
   page_cache->unlock();
-  return nullptr;
+  new_span->used_by_cc = true;
 
   char *start = (char *)(new_span->pageID << PAGE_SHIFT);
   char *end = (char *)(start + (new_span->page_nums << PAGE_SHIFT));

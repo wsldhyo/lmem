@@ -12,6 +12,7 @@ struct Span {
   Span *next = nullptr;
   void *free_list = nullptr;
   std::size_t use_count = 0;
+  bool used_by_cc = false;
 };
 
 // 双向循环链表
