@@ -5,19 +5,38 @@
 namespace lmem {
 
 using PageID_t = std::size_t;
+
+//
+// @brief 管理以页为单位的大内存
+// 
+// 
 struct Span {
-  PageID_t pageID = 0;
-  std::size_t page_nums = 0;
-  Span *prev = nullptr;
+  // Span管理的内存页数
+  // 每个物理内存页通常是4KB，对于小内存如8B，那么一个内存页就可以满足
+  // 对于大内存如128KB，那么Span需要32个内存页
+  std::size_t page_num = 0;     
+
+// Span管理的首个内存页页号(页内存首地址) 
+  PageID_t pageID = 0;         
+  
+  // 方便后面实现Span的双向链表
+  Span *prev = nullptr;         
   Span *next = nullptr;
+  
+  // 页内存需要拆分为不同大小的内存块，以便TC取用
   void *free_list = nullptr;
+
   std::size_t use_count = 0;
   bool used_by_cc = false;
 };
 
-// 双向循环链表
+// 
+// @brief Span的双向循环链表
+//
 class SpanList {
 public:
+  
+  // 简单的迭代器
   struct iterator {
   public:
     Span *&operator++();

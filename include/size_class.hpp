@@ -29,9 +29,9 @@ public:
   // @param [in] max_num 单次申请上限
   // @return 该大小内存块对应的哈希桶索引
   //
-  static std::size_t cacl_apply_mem_nums(std::size_t size, std::size_t max_num);
+  static std::size_t count_block_num(std::size_t size, std::size_t max_num);
 
-  static std::size_t cacl_apply_page_nums(std::size_t size);
+  static std::size_t count_page_num(std::size_t size);
 
 private:
   //

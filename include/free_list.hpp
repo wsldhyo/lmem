@@ -12,7 +12,7 @@ namespace lmem {
 // @param [in] obj 指向内存块的指针
 // @return void* 下一内存块的地址的引用
 //
-void *&get_next_memptr(void *obj);
+void *&next_memptr(void *obj);
 
 //
 // @brief 管理小块内存的自由链表类

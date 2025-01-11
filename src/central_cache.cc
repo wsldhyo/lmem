@@ -4,7 +4,6 @@
 #include "page_cache.hpp"
 #include "size_class.hpp"
 #include <cassert>
-#include <cstddef>
 
 namespace lmem {
 CentralCache *CentralCache::get_instance() {
@@ -15,11 +14,11 @@ CentralCache *CentralCache::get_instance() {
 }
 
 std::size_t CentralCache::fetch_batch_mems(void *&start, void *&end,
-                                           std::size_t apply_num,
+                                           std::size_t alloc_nums,
                                            std::size_t size) {
   auto hash_index = SizeClass::get_hash_index(size);
   auto &span_list = span_lists_[hash_index];
-  span_list.lock();
+  span_list.lock();      // 可能有多个线程访问同一size的哈希桶，加锁保护
   auto span = get_one_span(span_list, size);
   assert(span);
   assert(span->free_list); // span管理的空间不能为空
@@ -27,14 +26,17 @@ std::size_t CentralCache::fetch_batch_mems(void *&start, void *&end,
   start = span->free_list;
   end = span->free_list;
   std::size_t actual_num = 1;
-  for (std::size_t i = 0; i < apply_num - 1 && get_next_memptr(end) != nullptr;
+  // 将end后移alloc_nums块内存块，加上start指向的内存块数，就是期望的内存数
+  for (std::size_t i = 0; i < alloc_nums - 1 && next_memptr(end) != nullptr;
        ++i) {
-    end = get_next_memptr(end);
+    end = next_memptr(end);
     ++actual_num;
   }
 
-  span->free_list = get_next_memptr(end);
-  get_next_memptr(end) = nullptr;
+  span->free_list = next_memptr(end);   // 从Span中取出空间后，调整Span的自由链表
+
+  next_memptr(end) = nullptr;       // 取出的空间不要再与Span中的空间关联
+  
   span->use_count += actual_num;
   span_list.unlock();
   return actual_num;
@@ -50,10 +52,10 @@ std::size_t CentralCache::fetch_batch_mems(void *&start, void *&end,
     PageCache* PC = PageCache::get_instance();
     while(start)
     {
-      next = get_next_memptr(start);
+      next = next_memptr(start);
       span = PC->map_obj_to_span(start);
       // 将内存块归还给管理所在页的Span
-      get_next_memptr(start) = span->free_list;
+      next_memptr(start) = span->free_list;
       span->free_list = start;
       --span->use_count;
 
@@ -101,11 +103,11 @@ Span *CentralCache::get_one_span(SpanList &span_list, std::size_t size) {
   void *tail = start;
   start += size;
   while (start < end) {
-    get_next_memptr(tail) = start;
+    next_memptr(tail) = start;
     start += size;
-    tail = get_next_memptr(tail);
+    tail = next_memptr(tail);
   }
-  get_next_memptr(tail) = nullptr;
+  next_memptr(tail) = nullptr;
   span_list.lock();
   span_list.push_front(new_span);
   return new_span;

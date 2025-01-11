@@ -8,6 +8,13 @@
 #include <unordered_map>
 namespace lmem {
 
+
+// 
+// @brief 页缓存类
+// PC中也有Span的哈希桶。但映射规则与CC和TC中的不一样。CC和TC中的哈希桶是依据内存块
+// 大小进行映射的。而PC中的哈希桶是依据页数映射的，哈希索引为i的SpanList，其管理的
+// 每个Span都维护i页内存
+//
 class PageCache{
 public:
     static PageCache* get_instance();
