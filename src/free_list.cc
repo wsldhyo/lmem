@@ -19,10 +19,10 @@ void FreeList::push(void *obj) {
   ++size_;
 }
 
-void FreeList::push(void *start, void *end, std::size_t nums) {
+void FreeList::push(void *start, void *end, std::size_t num) {
   next_memptr(end) = list_head_;
   list_head_ = start;
-  size_ += nums;
+  size_ += num;
 }
 
 

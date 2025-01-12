@@ -1,5 +1,6 @@
 #include "thread_cache.hpp"
 #include "central_cache.hpp"
+#include "free_list.hpp"
 #include "global_var.hpp"
 #include "size_class.hpp"
 #include <cassert>
@@ -54,7 +55,8 @@ void *ThreadCache::fetch_mem_from_cc(std::size_t hash_index,
   if (actual_num == 1) {
     assert(start == end);
   } else {
-    free_lists_[hash_index].push(start, end, actual_num - 1);
+    // start指向的内存块返回给线程使用，所以将剩下actual_num-1的内存块放入自由链表中备用
+    free_lists_[hash_index].push(next_memptr(start), end, actual_num - 1);
   }
   return start;
 }

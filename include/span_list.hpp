@@ -17,6 +17,7 @@ struct Span {
   std::size_t page_num = 0;     
 
 // Span管理的首个内存页页号(页内存首地址) 
+// pageID是首地址除以页大小计算得到的， 一个Span管理的页范围是[pageID, pageID +page_num)
   PageID_t pageID = 0;         
   
   // 方便后面实现Span的双向链表

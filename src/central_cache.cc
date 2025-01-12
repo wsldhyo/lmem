@@ -33,10 +33,8 @@ std::size_t CentralCache::fetch_batch_mems(void *&start, void *&end,
     ++actual_num;
   }
 
-  span->free_list = next_memptr(end);   // 从Span中取出空间后，调整Span的自由链表
-
   next_memptr(end) = nullptr;       // 取出的空间不要再与Span中的空间关联
-  
+  span->free_list = next_memptr(end);   // 从Span中取出空间后，调整Span的自由链表
   span->use_count += actual_num;
   span_list.unlock();
   return actual_num;
@@ -67,10 +65,8 @@ std::size_t CentralCache::fetch_batch_mems(void *&start, void *&end,
         span->free_list = nullptr;
         span->next = nullptr;
         span->prev = nullptr;
-        span_list.unlock();
-        PC->lock();
+        span_list.unlock();     // 等待PC完成操作前，让其他线程可以操作当前桶
         PC->return_span_to_pc(span);
-        PC->unlock();
         span_list.lock();
       }
       start = next;
@@ -87,16 +83,14 @@ Span *CentralCache::get_one_span(SpanList &span_list, std::size_t size) {
     ++iter;
   }
   span_list.unlock();
-  std::size_t k = SizeClass::cacl_apply_page_nums(size);
+  std::size_t k = SizeClass::count_page_num(size);
   PageCache *page_cache = PageCache::get_instance();
   
-  page_cache->lock();
-  Span *new_span = page_cache->new_raw_span(k);
-  page_cache->unlock();
+  Span *new_span = page_cache->get_raw_span(k);
   new_span->used_by_cc = true;
 
   char *start = (char *)(new_span->pageID << PAGE_SHIFT);
-  char *end = (char *)(start + (new_span->page_nums << PAGE_SHIFT));
+  char *end = (char *)(start + (new_span->page_num << PAGE_SHIFT));
 
   // 切分new_span的空间，并将其串成链表
   new_span->free_list = start;
@@ -108,7 +102,7 @@ Span *CentralCache::get_one_span(SpanList &span_list, std::size_t size) {
     tail = next_memptr(tail);
   }
   next_memptr(tail) = nullptr;
-  span_list.lock();
+  span_list.lock();  // 写入Span时先加上锁  
   span_list.push_front(new_span);
   return new_span;
 }
