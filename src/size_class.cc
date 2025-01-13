@@ -1,5 +1,6 @@
 #include <cassert>
 #include <algorithm>
+#include <cstddef>
 #include "global_var.hpp"
 #include "size_class.hpp"
 namespace lmem {
@@ -65,8 +66,7 @@ std::size_t SizeClass::get_hash_index_(std::size_t size,
   return ((size + (1 << align_shift) - 1) >> align_shift) - 1;
 }
 
-std::size_t SizeClass::count_block_num(std::size_t size,
-                                           std::size_t max_num) {
+std::size_t SizeClass::count_block_num(std::size_t size) {
   assert(size > 0);
   // 除一下，计算每种size对应的个数
   std::size_t num = MAX_TC_BLOCK_SIZE / size;
@@ -79,12 +79,22 @@ std::size_t SizeClass::count_block_num(std::size_t size,
   {
     num = 2;
   }
-  return std::min(num, max_num);
+  return num;
 }
 
 
    std::size_t SizeClass::count_page_num(std::size_t size){
-      
-  
+    // 获取Tc向CC申请时，单次最大申请数
+     auto num = count_block_num(size); 
+    
+    //计算单次申请大小，再除以页大小，即得申请页数
+    std::size_t npage = num * size;
+    npage >>= PAGE_SHIFT;
+    
+    // 至少申请一页内存
+    if (npage == 0) {
+      npage = 1;
+    }
+    return npage;
    }
 } // namespace lmem

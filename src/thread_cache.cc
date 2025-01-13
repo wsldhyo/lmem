@@ -7,7 +7,6 @@
 
 namespace lmem {
 
-inline thread_local ThreadCache *g_thread_cache = nullptr;
 
 void *ThreadCache::allocate(std::size_t size) {
   auto aligned_size = SizeClass::round_up(size);
@@ -40,7 +39,8 @@ void *ThreadCache::fetch_mem_from_cc(std::size_t hash_index,
     fetch_mem_nums_[hash_index] = 1;
   }
   auto alloc_nums =
-      SizeClass::count_block_num(aligned_size, fetch_mem_nums_[hash_index]);
+      SizeClass::count_block_num(aligned_size);
+  alloc_nums = std::min(alloc_nums, fetch_mem_nums_[hash_index]);
   // 如果单次申请数量没有达到上限
   // 则增加fetch_mem_nums_[hash_index]
   // 以便让下次申请相同大小内存时，向CC申请更多块内存

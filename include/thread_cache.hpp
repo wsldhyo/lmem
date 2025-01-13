@@ -68,7 +68,7 @@ private:
   std::size_t fetch_mem_nums_[FREE_LIST_NUM] = {0};
 };
 
-inline extern thread_local ThreadCache *g_thread_cache;
+inline thread_local ThreadCache *g_thread_cache = nullptr;
 } // namespace lmem
 
 #endif

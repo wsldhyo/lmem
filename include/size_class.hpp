@@ -26,10 +26,9 @@ public:
   //     申请内存的频次。因此TC每次申请时，CC会返回多块大小符合要求的
   //     内存块。该函数用于确定TC一次申请多少块内存
   // @param [in] size 内存块大小
-  // @param [in] max_num 单次申请上限
   // @return 该大小内存块对应的哈希桶索引
   //
-  static std::size_t count_block_num(std::size_t size, std::size_t max_num);
+  static std::size_t count_block_num(std::size_t size);
 
   static std::size_t count_page_num(std::size_t size);
 

@@ -6,6 +6,10 @@
 #include <cassert>
 
 namespace lmem {
+
+
+CentralCache* CentralCache::instance_ = nullptr;
+
 CentralCache *CentralCache::get_instance() {
   if (instance_ == nullptr) {
     instance_ = new CentralCache();

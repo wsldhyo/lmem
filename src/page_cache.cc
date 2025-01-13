@@ -7,6 +7,7 @@
 
 namespace lmem {
 
+PageCache* PageCache::instance_  = nullptr;
 PageCache *PageCache::get_instance() {
   if (instance_ == nullptr) {
     instance_ = new PageCache();

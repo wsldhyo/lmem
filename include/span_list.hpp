@@ -40,6 +40,7 @@ public:
   // 简单的迭代器
   struct iterator {
   public:
+    iterator(Span* span = nullptr);
     Span *&operator++();
     Span *operator++(int);
     Span *&operator--();
