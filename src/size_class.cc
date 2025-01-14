@@ -1,5 +1,4 @@
 #include <cassert>
-#include <algorithm>
 #include <cstddef>
 #include "global_var.hpp"
 #include "size_class.hpp"
