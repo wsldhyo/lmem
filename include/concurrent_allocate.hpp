@@ -4,7 +4,7 @@
 namespace lmem {
 void *concurrent_allocate(std::size_t size);
 
-void concurrent_deallocate(void *obj, std::size_t aligned_size);
+void concurrent_deallocate(void *obj);
 } // namespace lmem
 
 #endif

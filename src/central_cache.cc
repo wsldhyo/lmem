@@ -97,6 +97,7 @@ Span *CentralCache::get_one_span(SpanList &span_list, std::size_t size) {
   char *end = (char *)(start + (new_span->page_num << PAGE_SHIFT));
 
   // 切分new_span的空间，并将其串成链表
+  new_span->block_size = size;
   new_span->free_list = start;
   void *tail = start;
   start += size;

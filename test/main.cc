@@ -8,11 +8,11 @@ int main(int argc, char *argv[]) {
   auto ptr4 = lmem::concurrent_allocate(16);
   auto ptr5 = lmem::concurrent_allocate(278);
 
-  lmem::concurrent_deallocate(ptr1, 15);
-  lmem::concurrent_deallocate(ptr2, 3);
-  lmem::concurrent_deallocate(ptr3, 82);
-  lmem::concurrent_deallocate(ptr4, 16);
-  lmem::concurrent_deallocate(ptr5, 278);
+  lmem::concurrent_deallocate(ptr1);
+  lmem::concurrent_deallocate(ptr2);
+  lmem::concurrent_deallocate(ptr3);
+  lmem::concurrent_deallocate(ptr4);
+  lmem::concurrent_deallocate(ptr5);
   std::cout << "exit" << std::endl;
   return 0;
 }

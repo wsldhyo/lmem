@@ -29,6 +29,7 @@ struct Span {
 
   std::size_t use_count = 0;
   bool used_by_cc = false;
+  std::size_t block_size;
 };
 
 // 

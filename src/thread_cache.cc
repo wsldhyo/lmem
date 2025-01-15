@@ -28,7 +28,7 @@ void ThreadCache::deallocate(void *obj, std::size_t aligned_size) {
   auto& free_list = free_lists_[hash_index];
   free_list.push(obj);
   if (free_list.size() >= fetch_mem_nums_[hash_index]) {
-    return_mem_to_cc(free_list, aligned_size);
+    return_mem_to_cc(free_list, fetch_mem_nums_[hash_index]);
     fetch_mem_nums_[hash_index] = 1;
   }
 }

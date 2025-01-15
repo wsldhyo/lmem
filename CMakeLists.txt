@@ -24,6 +24,6 @@ add_executable(main include/global_var.hpp ${FULL_SRC_FILES} test/main.cc)
 
 target_include_directories(main PRIVATE include)
 
-target_compile_options(main PRIVATE -pthread)
+target_compile_options(main PRIVATE -pthread -g)
 
 target_link_libraries(main PRIVATE -pthread)

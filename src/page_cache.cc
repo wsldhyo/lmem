@@ -71,7 +71,7 @@ Span *PageCache::get_raw_span_(std::size_t k) {
   big_span->pageID = ((PageID_t)ptr) >> PAGE_SHIFT;
   big_span->page_num = MAX_PAGE_NUM - 1;
   span_lists_[MAX_PAGE_NUM - 1].push_front(big_span);
-  return get_raw_span(k);
+  return get_raw_span_(k);
 }
 
 void PageCache::return_span_to_pc(Span *span) {
